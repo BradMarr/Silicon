@@ -9,7 +9,7 @@ endif()
 project("Silicon")
 
 if(NOT WIN32)
-  message(FATAL_ERROR "Silicon requires Windows (uses DirectX 11 and Win32).")
+  message(FATAL_ERROR "${PROJECT_NAME} requires Windows (uses DirectX 11 and Win32).")
 endif()
 
 file(GLOB SOURCES "src/source/*.cpp")
