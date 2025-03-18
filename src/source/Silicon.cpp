@@ -1,6 +1,6 @@
 #include "Silicon.hpp"
 
-#include <Windows.h>
+#include <windows.h>
 
 namespace Silicon 
 {
