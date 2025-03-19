@@ -13,9 +13,11 @@ namespace Silicon
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PWSTR pCmdLine, _In_ int nCmdShow)
 {
-	Silicon::Window window("Silicon", 800, 600, hInstance);
+    char* name;
 
-    Silicon::init();
+    Silicon::init(name);
+    
+	Silicon::Window window(name, 800, 600, hInstance);
 
 	MSG msg = {};
     while (msg.message != WM_QUIT)

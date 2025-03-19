@@ -2,10 +2,16 @@
 
 namespace Silicon 
 {
-	void error(const char* message);
-
+    /**
+    * @brief User-defined function that runs every draw cycle.
+    */
     void gameLoop();
-    void init();
+    /**
+    * @brief User-defined function that runs before game loop.
+    */
+    void init(char* name);
+
+	void error(const char* message);
 
     class Window 
     {

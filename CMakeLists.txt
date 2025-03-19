@@ -8,10 +8,11 @@ endif()
 
 file(GLOB SOURCES "src/source/*.cpp")
 
-add_library(Silicon STATIC ${SOURCES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES} )
 
-target_include_directories(Silicon PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
+target_link_libraries(${PROJECT_NAME} PRIVATE d3d11)
 
-set_property(TARGET Silicon PROPERTY CXX_STANDARD 23)
-set_property(TARGET Silicon PROPERTY CXX_STANDARD_REQUIRED ON)
-set_property(TARGET Silicon PROPERTY CXX_EXTENSIONS OFF)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
