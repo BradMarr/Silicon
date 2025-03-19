@@ -3,7 +3,9 @@
 namespace Silicon 
 {
 	void error(const char* message);
+
     void gameLoop();
+    void init();
 
     class Window 
     {
