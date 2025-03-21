@@ -7,8 +7,7 @@ if(NOT WIN32)
 endif()
 
 file(GLOB SOURCES "src/source/*.cpp")
-
-add_library(${PROJECT_NAME} STATIC ${SOURCES} )
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
 target_link_libraries(${PROJECT_NAME} PRIVATE d3d11 dxgi)

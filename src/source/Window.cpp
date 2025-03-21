@@ -2,23 +2,28 @@
 
 #include <Windows.h>
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowProcess(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch (uMsg)
-	{
+	switch (msg) {
+	case WM_CLOSE:
+		DestroyWindow(hwnd);
+		return 0;
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		if (hwnd == Silicon::getMainWindow()) 
+		{
+			PostQuitMessage(0);
+		}
 		return 0;
 	}
-	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-Silicon::Window::Window(const char* name, int2 resolution, void* hInstance)
+Silicon::Window::Window(const char* name, int2 resolution)
 {
 	WNDCLASS wc = { };
 
-	wc.lpfnWndProc = WindowProc;
-	wc.hInstance = (HINSTANCE)hInstance;
+	wc.lpfnWndProc = WindowProcess;
+	wc.hInstance = (HINSTANCE)Silicon::getHInstance();
 	wc.lpszClassName = name;
 
 	RegisterClass(&wc);
