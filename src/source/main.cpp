@@ -1,37 +1,31 @@
 #include "Silicon.hpp"
+#include "Engine.hpp"
+#include "Renderer.hpp"
 
-#include <Windows.h>
-
-void setHInstance(const void* hInstance)
-{
-	Silicon::hInstance_ = hInstance;
-}
-
-void setMainWindow(const void* mainWindow)
-{
-	Silicon::mainWindow_ = mainWindow;
-}
+using namespace Silicon;
 
 static int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PWSTR pCmdLine, _In_ int nCmdShow)
 {
-	setHInstance(hInstance);
+    Engine::hInstance_ = hInstance;
 
-    Silicon::config();
+    config();
 
-    if (Silicon::getGameName() == nullptr)
+    if (getGameName() == nullptr)
     {
-        Silicon::error("Game name should be declared inside of the config function.");
+        error("Game name should be declared inside of the config function.");
     }
 
-    if (Silicon::getGameResolution().x == NULL || Silicon::getGameResolution().y == NULL)
+    if (getGameResolution().x == NULL || getGameResolution().y == NULL)
     {
-        Silicon::error("Game resolution should be declared inside of the config function.");
+        error("Game resolution should be declared inside of the config function.");
     }
 
-    Silicon::Window window(Silicon::getGameName(), Silicon::getGameResolution());
-	setMainWindow(window.windowHandle_);
+    Window window(getGameName(), getGameResolution());
+	Engine::mainWindow_ = &window;
 
-	Silicon::init();
+    Renderer renderer(window);
+
+	init();
 
     MSG msg = {};
     while (msg.message != WM_QUIT)
@@ -43,11 +37,12 @@ static int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevIns
         }
         else
         {
-            Silicon::gameLoop();
+            gameLoop();
+			renderer.render();
         }
     }
 
-    Silicon::cleanup();
+    cleanup();
 
     return 0;
 }

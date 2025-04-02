@@ -1,6 +1,7 @@
 #include "Silicon.hpp"
+#include "Engine.hpp"
 
-#include <Windows.h>
+using namespace Silicon;
 
 LRESULT CALLBACK WindowProcess(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -9,7 +10,7 @@ LRESULT CALLBACK WindowProcess(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 		DestroyWindow(hwnd);
 		return 0;
 	case WM_DESTROY:
-		if (hwnd == Silicon::getMainWindow()) 
+		if (hwnd == Engine::mainWindow_->windowHandle_) 
 		{
 			PostQuitMessage(0);
 		}
@@ -18,12 +19,13 @@ LRESULT CALLBACK WindowProcess(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-Silicon::Window::Window(const char* name, int2 resolution)
+Window::Window(const char* name, int2 resolution)
+	: resolution_(resolution)
 {
 	WNDCLASS wc = { };
 
 	wc.lpfnWndProc = WindowProcess;
-	wc.hInstance = (HINSTANCE)Silicon::getHInstance();
+	wc.hInstance = Engine::hInstance_;
 	wc.lpszClassName = name;
 
 	RegisterClass(&wc);
@@ -49,11 +51,11 @@ Silicon::Window::Window(const char* name, int2 resolution)
 		return;
 	}
 
-	ShowWindow((HWND)windowHandle_, SW_SHOW);
-	UpdateWindow((HWND)windowHandle_);
+	ShowWindow(windowHandle_, SW_SHOW);
+	UpdateWindow(windowHandle_);
 }
 
-Silicon::Window::~Window() 
+Window::~Window() 
 {
-	DestroyWindow((HWND)windowHandle_);
+	DestroyWindow(windowHandle_);
 }

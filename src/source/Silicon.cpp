@@ -1,11 +1,7 @@
 #include "Silicon.hpp"
+#include "Engine.hpp"
 
-#include <windows.h>
-
-const void* Silicon::hInstance_ = nullptr;
-const void* Silicon::mainWindow_ = nullptr;
-const char* Silicon::gameName_ = nullptr;
-Silicon::int2 Silicon::gameResolution_ = { NULL, NULL };
+using namespace Silicon;
 
 void Silicon::error(const char* message) 
 {
@@ -15,38 +11,24 @@ void Silicon::error(const char* message)
 
 void Silicon::setGameName(const char* name)
 {
-	if (gameName_ != nullptr)
+	if (Engine::gameName_ != nullptr)
 	{
-		Silicon::error("Game name should be declared only once.");
+		error("Game name should be declared only once.");
 	}
-	gameName_ = name;
+	Engine::gameName_ = name;
 }
 
 void Silicon::setGameResolution(int2 resolution)
 {
-	if (Silicon::getGameResolution().x != NULL || Silicon::getGameResolution().y != NULL)
-	{
-		Silicon::error("Game resolution should be declared only once.");
-	}
-	gameResolution_ = resolution;
+	Engine::gameResolution_ = resolution;
 }
 
-const char* const Silicon::getGameName()
+const char* Silicon::getGameName()
 {
-	return gameName_;
+	return Engine::gameName_;
 }
 
-Silicon::int2 const Silicon::getGameResolution()
+int2 Silicon::getGameResolution()
 {
-	return gameResolution_;
-}
-
-const void* const Silicon::getHInstance()
-{
-	return Silicon::hInstance_;
-}
-
-const void* const Silicon::getMainWindow()
-{
-	return Silicon::mainWindow_;
+	return Engine::gameResolution_;
 }

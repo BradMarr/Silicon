@@ -1,62 +1,60 @@
-//#include "Silicon.hpp"
-//
-//#include <d3d11.h>
-//#include <dxgi1_2.h>
-//
-//Silicon::Renderer::Renderer(Window window)
-//{
-//    DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-//    swapChainDesc.BufferCount = 1; // One back buffer
-//    swapChainDesc.BufferDesc.Width = window.resolution_.x; // Window width (adjust as needed)
-//    swapChainDesc.BufferDesc.Height = window.resolution_.y; // Window height (adjust as needed)
-//    swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA format
-//    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-//    swapChainDesc.OutputWindow = (HWND)window.windowHandle_; // Your Win32 window handle
-//    swapChainDesc.SampleDesc.Count = 1; // No multisampling
-//    swapChainDesc.SampleDesc.Quality = 0;
-//    swapChainDesc.Windowed = TRUE; // Windowed mode
-//    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-//
-//    // Create device and swap chain
-//    D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
-//    HRESULT hr = D3D11CreateDeviceAndSwapChain(
-//        nullptr, // Default adapter
-//        D3D_DRIVER_TYPE_HARDWARE, // Hardware rendering
-//        nullptr, // No software rasterizer
-//        0, // No special flags (use D3D11_CREATE_DEVICE_DEBUG for debugging)
-//        &featureLevel, 1, // Feature level
-//        D3D11_SDK_VERSION,
-//        &swapChainDesc,
-//        &swapChain_,
-//        &device_,
-//        nullptr,
-//        &deviceContext_
-//    );
-//    if (FAILED(hr)) {
-//        Silicon::error("Failed to create device and swap chain.");
-//    }
-//
-//    // Create render target view
-//    ID3D11Texture2D* backBuffer = nullptr;
-//    swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-//    device->CreateRenderTargetView(backBuffer, nullptr, &renderTargetView);
-//    backBuffer->Release();
-//
-//    // Set the render target
-//    deviceContext->OMSetRenderTargets(1, &renderTargetView, nullptr);
-//
-//    // Set up the viewport
-//    D3D11_VIEWPORT viewport = {};
-//    viewport.Width = 800.0f; // Match swap chain width
-//    viewport.Height = 600.0f; // Match swap chain height
-//    viewport.MinDepth = 0.0f;
-//    viewport.MaxDepth = 1.0f;
-//    viewport.TopLeftX = 0;
-//    viewport.TopLeftY = 0;
-//    deviceContext->RSSetViewports(1, &viewport);
-//}
-//
-//Silicon::Renderer::~Renderer()
-//{
-//
-//}
+#include "Silicon.hpp"
+#include "Renderer.hpp"
+
+using namespace Silicon;
+
+Renderer::Renderer(Window& window) 
+{
+    DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+    swapChainDesc.BufferCount = 1;
+    swapChainDesc.BufferDesc.Width = window.resolution_.x;
+    swapChainDesc.BufferDesc.Height = window.resolution_.y;
+    swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
+    swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    swapChainDesc.OutputWindow = window.windowHandle_;
+    swapChainDesc.SampleDesc.Count = 1;
+    swapChainDesc.SampleDesc.Quality = 0;
+    swapChainDesc.Windowed = TRUE;
+    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+    swapChainDesc.Flags = 0;
+
+    D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
+    HRESULT hr = D3D11CreateDeviceAndSwapChain(
+        nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0,
+        &featureLevel, 1, D3D11_SDK_VERSION,
+        &swapChainDesc, &swapChain_, &device_, nullptr, &deviceContext_
+    );
+    if (FAILED(hr)) {
+        error("Failed to create device and swap chain.");
+    }
+
+    ID3D11Texture2D* backBuffer = nullptr;
+    swapChain_->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
+    device_->CreateRenderTargetView(backBuffer, nullptr, &renderTargetView_);
+    backBuffer->Release();
+
+    deviceContext_->OMSetRenderTargets(1, &renderTargetView_, nullptr);
+    D3D11_VIEWPORT viewport = {};
+    viewport.TopLeftX = 0;
+    viewport.TopLeftY = 0;
+    viewport.Width = static_cast<float>(window.resolution_.x);
+    viewport.Height = static_cast<float>(window.resolution_.y);
+    viewport.MinDepth = 0.0f;
+    viewport.MaxDepth = 1.0f;
+    deviceContext_->RSSetViewports(1, &viewport);
+}
+
+Renderer::~Renderer() {
+    renderTargetView_->Release();
+    deviceContext_->Release();
+    device_->Release();
+    swapChain_->Release();
+}
+
+void Renderer::render() {
+    float clearColor[] = { 1.0f, 0.2f, 0.4f, 1.0f };
+    deviceContext_->ClearRenderTargetView(renderTargetView_, clearColor);
+    swapChain_->Present(0, 0);
+}
